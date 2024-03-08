@@ -12,7 +12,4 @@ class HBNBCommand(cmd.Cmd):
     def do_quit(self, arg):
         """Exit the program."""
         print("Quitting...")
-        return True  # This will exit the command loop
-
-if __name__ == '__main__':
-    HBNBCommand().cmdloop()
+        return True  # Exits the command loop
