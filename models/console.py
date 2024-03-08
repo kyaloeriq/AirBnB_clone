@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import cmd
+from HBNBCommand import HBNBCommand  # Import the HBNBCommand class from another file
 
 class MyCmd(cmd.Cmd):
     def do_hello(self, arg):
