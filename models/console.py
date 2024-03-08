@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import cmd
 
 class MyCmd(cmd.Cmd):
@@ -9,4 +9,4 @@ class MyCmd(cmd.Cmd):
         return True
 
 if __name__ == '__main__':
-    ABNBCmd().cmdloop()
+    HBNBCommand().cmdloop()
