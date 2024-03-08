@@ -1,6 +1,8 @@
+#!/usr/bin/python3
+
 import cmd
 
-class HBNBCmd(cmd.Cmd):
+class HBNBCommand(cmd.Cmd):
     prompt = 'HBNB> '  # Prompt displayed to the user
 
     def do_hello(self, arg):
@@ -13,4 +15,4 @@ class HBNBCmd(cmd.Cmd):
         return True  # This will exit the command loop
 
 if __name__ == '__main__':
-    HBNBCmd().cmdloop()
+    HBNBCommand().cmdloop()
