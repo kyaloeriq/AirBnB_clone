@@ -3,25 +3,22 @@
 import os
 import json
 
+
 class FileStorage:
-    """A class for serializing instances to a JSON file and deserializing JSON file to instances."""
+    """A class serializing instances to JSON file"""
 
     __file_path = "file.json"
     __objects = {}
 
-
-    @classmethod
     def all(self):
         """Returns the dictionary __objects"""
         return self.__objects
 
-    @classmethod
     def new(self, obj):
         """Sets in __objects obj with key <obj class name>.id."""
         key = f"{type(obj).__name__}.{obj.id}"
         self.__objects[key] = obj
 
-    @classmethod
     def save(self):
         """Serializes __objects to the JSON file __file_path."""
         serialized_objects = {}
@@ -30,9 +27,8 @@ class FileStorage:
         with open(self.__file_path, 'w') as file:
             json.dump(serialized_objects, file)
 
-     @classmethod
-     def reload(self):
-        """De-serializes JSON file __file_path to __objects, if it exists"""
+    def reload(self):
+        """Deserializes JSON file __file_path to __objects if it exists"""
         if os.path.exists(self.__file_path):
             with open(self.__file_path, 'r') as file:
                 data = json.load(file)
