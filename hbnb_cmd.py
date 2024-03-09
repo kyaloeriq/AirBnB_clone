@@ -2,7 +2,7 @@
 
 import cmd
 from models.user import User
-from models import storage
+from models import FileStorage
 
 class HBNBCommand(cmd.Cmd):
     prompt = 'HBNB> '  # Prompt displayed to the user
