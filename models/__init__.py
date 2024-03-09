@@ -1,3 +1,7 @@
 #!/usr/bin/python3
 
-from .base_model import BaseModel
+from .file_storage import FileStorage
+
+storage = FileStorage()  # a unique FileStorage application instance
+
+storage.reload()
