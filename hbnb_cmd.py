@@ -70,6 +70,18 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("Usage: all User")
 
+    def do_count(self, arg):
+        """Retrieves the number of instances of a class"""
+        if not arg:
+            print("** class name missing **")
+            return
+        arg_list = arg.split()
+        if arg_list[0] not in ["BaseModel"]:
+            print("** class doesn't exist **")
+            return
+        count = sum(1 for obj in storage.all().values() if obj.__class__.__name__ == arg_list[0])
+        print(count)
+
     def do_quit(self, arg):
         """Exit the program"""
         print("Quitting...")
