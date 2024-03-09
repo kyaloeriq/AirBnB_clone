@@ -4,6 +4,7 @@ import cmd
 from models.user import User
 from models.engine.file_storage import FileStorage
 
+
 class HBNBCommand(cmd.Cmd):
     prompt = 'HBNB> '  # Prompt displayed to the user
 
@@ -46,7 +47,7 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
 
     def do_update(self, arg):
-        """Update cmd usage: update User <user_id> <attribute> "<value>"""
+        """Update usage: update User <user_id> <attribute> "<value>"""
         args = arg.split()
         if len(args) < 4:
             print("Usage: update User <user_id> <attribute> <value>")
@@ -79,7 +80,8 @@ class HBNBCommand(cmd.Cmd):
         if arg_list[0] not in ["BaseModel"]:
             print("** class doesn't exist **")
             return
-        count = sum(1 for obj in storage.all().values() if obj.__class__.__name__ == arg_list[0])
+        count = sum(1 for obj in storage.all().values()
+                    if obj.__class__.__name__ == arg_list[0])
         print(count)
 
     def do_quit(self, arg):
@@ -91,6 +93,7 @@ class HBNBCommand(cmd.Cmd):
         """Exit on EOF: Ctrl+D or Ctrl+Z"""
         print("")
         return True
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
