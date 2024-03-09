@@ -11,41 +11,37 @@ class FileStorage:
 
 
     @classmethod
-    def all(cls):
+    def all(self):
         """Returns the dictionary __objects"""
-        return cls.__objects
+        return self.__objects
 
     @classmethod
-    def new(cls, obj):
+    def new(self, obj):
         """Sets in __objects obj with key <obj class name>.id."""
         key = f"{type(obj).__name__}.{obj.id}"
-        cls.__objects[key] = obj
+        self.__objects[key] = obj
 
     @classmethod
-    def save(cls):
+    def save(self):
         """Serializes __objects to the JSON file __file_path."""
         serialized_objects = {}
-        for key, obj in cls.__objects.items():
+        for key, obj in self.__objects.items():
             serialized_objects[key] = obj.to_dict()
-        with open(cls.__file_path, 'w') as file:
+        with open(self.__file_path, 'w') as file:
             json.dump(serialized_objects, file)
 
      @classmethod
-     def reload(cls):
+     def reload(self):
         """De-serializes JSON file __file_path to __objects, if it exists"""
-        if os.path.exists(cls.__file_path):
-            with open(cls.__file_path, 'r') as file:
-                try:
-                    data = json.load(file)
-                except json.JSONDecodeError:
-                    print("Error: JSON file is corrupted.")
-                    return
+        if os.path.exists(self.__file_path):
+            with open(self.__file_path, 'r') as file:
+                data = json.load(file)
                 for key, value in data.items():
                     class_name, obj_id = key.split('.')
                     try:
-                        cls_ = getattr(__import__('models.' + class_name.lower()), class_name)
-                    except AttributeError:
+                        cls_ = globals()[class_name]
+                    except KeyError:
                         print(f"Error: Class {class_name} not found.")
                         continue
                     obj = cls_(**value)
-                    cls.__objects[key] = obj
+                    self.__objects[key] = obj
