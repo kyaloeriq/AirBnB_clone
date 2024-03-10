@@ -5,44 +5,41 @@ The Console Module that contains the entry point of the command interpreter
 import cmd
 import json
 from models.base_model import BaseModel
+from models import Place, State, City, Amenity, Review
+from models.engine.file_storage import FileStorage
+
+storage = FileStorage()
+storage.reload()
 
 class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "  # Setting custom prompt
 
-    def do_create(self, arg):
-        """Creates a new instance of BaseModel, saves it and prints id"""
-        if not arg:
-            print("** class name missing **")
+    def do_create(class_name, **kwargs):
+        if class_name == "Place":
+            obj = Place(**kwargs)
+        elif class_name == "State":
+            obj = State(**kwargs)
+        elif class_name == "City":
+            obj = City(**kwargs)
+        elif class_name == "Amenity":
+            obj = Amenity(**kwargs)
+        elif class_name == "Review":
+            obj = Review(**kwargs)
+        else:
+            print("Invalid class name")
             return
-        try:
-            new_instance = eval(arg)()
-            new_instance.save()
-            print(new_instance.id)
-        except NameError:
-            print("** class doesn't exist **")
+        obj.save()
 
-    def do_show(self, arg):
+    def do_show(class_name, obj_id):
         """Prints the string representation of an instance"""
-        args = arg.split()
-        if len(args) == 0:
-            print("** class name missing **")
-            return
-        try:
-            cls_name = args[0]
-            if len(args) == 1:
-                print("** instance id missing **")
-                return
-            obj_id = args[1]
-            key = "{}.{}".format(cls_name, obj_id)
-            all_objs = BaseModel.all()
-            if key in all_objs:
-                print(all_objs[key])
-            else:
-                print("** no instance found **")
-        except NameError:
-            print("** class doesn't exist **")
+        key = f"{class_name}.{obj_id}"
+        obj = storage.all().get(key)
+        if obj:
+            print(obj)
+        else:
+            print("Not found")
 
-    def do_destroy(self, arg):
+    def do_destroy(class_name, arg):
         """Deletes an instance based on the class name and id"""
         args = arg.split()
         if len(args) == 0:
@@ -64,7 +61,7 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
 
-    def do_all(self, arg):
+    def do_all(class_name, arg):
         """Prints all string representation of all instances"""
         if arg:
             try:
