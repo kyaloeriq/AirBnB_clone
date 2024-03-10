@@ -3,15 +3,21 @@
 The Console Module that contains the entry point of the command interpreter
 """
 import cmd
+from models.engine import FileStorage
 from models.base_model import BaseModel
-from models import Place, State, City, Amenity, Review
-from models.engine.file_storage import FileStorage
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
 storage = FileStorage()
 storage.reload()
 
 class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "  # Setting custom prompt
+
+    valid_classes = ["BaseModel", "Place", "State", "City", "Amenity", "Review"]
 
     def do_create(self, arg):
         """Creates a new instance of a specified class"""
@@ -31,9 +37,9 @@ class HBNBCommand(cmd.Cmd):
                 key, value = param.split("=")
                 kwargs[key] = value.strip('"')
             
-            obj = eval(class_name)(**kwargs)
-            obj.save()
-            print(obj.id)
+            new_instance = eval(class_name)(**kwargs)
+            new_instance.save()
+            print(new_instance.id)
 
         except Exception as e:
             print(e)
@@ -116,7 +122,7 @@ class HBNBCommand(cmd.Cmd):
         """Prints all string representations of all instances"""
         try:
             if arg:
-                if arg not in ["Place", "State", "City", "Amenity", "Review"]:
+                if arg not in self.valid_classes:
                     raise ValueError("** class doesn't exist **")
                 
                 obj_list = storage.all()
