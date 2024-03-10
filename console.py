@@ -3,7 +3,6 @@
 The Console Module that contains the entry point of the command interpreter
 """
 import cmd
-import json
 from models.base_model import BaseModel
 from models import Place, State, City, Amenity, Review
 from models.engine.file_storage import FileStorage
@@ -16,67 +15,60 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, arg):
         """Creates a new instance of a specified class"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
         try:
-            class_name = args[0]
+            if not arg:
+                raise ValueError("** class name missing **")
+
+            class_name, *params = arg.split()
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
-                print("** class doesn't exist **")
-                return
-            if len(args) == 1:
-                print("** instance attributes missing **")
-                return
+                raise ValueError("** class doesn't exist **")
+
+            if not params:
+                raise ValueError("** instance attributes missing **")
+
             kwargs = {}
-            for pair in args[1:]:
-                key, value = pair.split("=")
+            for param in params:
+                key, value = param.split("=")
                 kwargs[key] = value.strip('"')
+            
             obj = eval(class_name)(**kwargs)
             obj.save()
             print(obj.id)
+
         except Exception as e:
             print(e)
 
     def do_show(self, arg):
         """Prints the string representation of an instance"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
         try:
-            class_name = args[0]
+            if not arg:
+                raise ValueError("** class name missing **")
+
+            class_name, obj_id = arg.split()
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
-                print("** class doesn't exist **")
-                return
-            if len(args) < 2:
-                print("** instance id missing **")
-                return
-            obj_id = args[1]
+                raise ValueError("** class doesn't exist **")
+
             key = "{}.{}".format(class_name, obj_id)
             obj = storage.all().get(key)
             if obj:
                 print(obj)
             else:
                 print("** no instance found **")
+
         except Exception as e:
             print(e)
 
+
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
         try:
-            class_name = args[0]
+            if not arg:
+                raise ValueError("** class name missing **")
+
+            class_name, obj_id = arg.split()
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
-                print("** class doesn't exist **")
-                return
-            if len(args) < 2:
-                print("** instance id missing **")
-                return
-            obj_id = args[1]
+                raise ValueError("** class doesn't exist **")
+
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
@@ -85,58 +77,57 @@ class HBNBCommand(cmd.Cmd):
                 storage.save()
             else:
                 print("** no instance found **")
+
         except Exception as e:
             print(e)
 
     def do_update(self, arg):
         """Updates an instance based on the class name and id"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
         try:
-            class_name = args[0]
+            if not arg:
+                raise ValueError("** class name missing **")
+
+            args = arg.split()
+            class_name, obj_id = args[0], args[1]
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
-                print("** class doesn't exist **")
-                return
-            if len(args) < 2:
-                print("** instance id missing **")
-                return
-            obj_id = args[1]
+                raise ValueError("** class doesn't exist **")
+
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
             if not obj:
                 print("** no instance found **")
                 return
+
             if len(args) < 3:
-                print("** attribute name missing **")
-                return
+                raise ValueError("** attribute name missing **")
+
             if len(args) < 4:
-                print("** value missing **")
-                return
-            attr_name = args[2]
-            attr_value = args[3].strip('"')
+                raise ValueError("** value missing **")
+
+            attr_name, attr_value = args[2], args[3].strip('"')
             setattr(obj, attr_name, attr_value)
             storage.save()
+
         except Exception as e:
             print(e)
 
     def do_all(self, arg):
         """Prints all string representations of all instances"""
-        if arg:
-            try:
+        try:
+            if arg:
+                if arg not in ["Place", "State", "City", "Amenity", "Review"]:
+                    raise ValueError("** class doesn't exist **")
+                
                 obj_list = storage.all()
                 filtered_objs = [str(obj) for obj in obj_list.values() if obj.__class__.__name__ == arg]
                 print(filtered_objs)
-            except Exception as e:
-                print(e)
-        else:
-            try:
+            else:
                 obj_list = storage.all()
                 print([str(obj) for obj in obj_list.values()])
-            except Exception as e:
-                print(e)
+
+        except Exception as e:
+            print(e)
 
     def do_quit(self, arg):
         """Command to exit the program"""
