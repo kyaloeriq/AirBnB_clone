@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+"""
+The Console Module that contains the entry point of the command interpreter
+"""
 import cmd
 import json
 from models.base_model import BaseModel
@@ -18,7 +21,7 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
 
-        def do_show(self, arg):
+    def do_show(self, arg):
         """Prints the string representation of an instance"""
         args = arg.split()
         if len(args) == 0:
