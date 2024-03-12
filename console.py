@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-The Console Module that contains the entry point of the command interpreter
+Module that contains the entry point of the command interpreter
 """
 import cmd
 from models.engine import FileStorage
@@ -15,7 +15,7 @@ storage = FileStorage()
 storage.reload()
 
 class HBNBCommand(cmd.Cmd):
-    """inherits all the methods and attributes of the parent class cmd"""
+    """Class that inherits methods and attributes of the parent class cmd"""
     prompt = "(hbnb) "  # Setting custom prompt
 
     valid_classes = ["BaseModel", "Place", "State", "City", "Amenity", "Review"]
@@ -73,12 +73,14 @@ class HBNBCommand(cmd.Cmd):
                 raise ValueError("** class name missing **")
 
             class_name, obj_id = arg.split()
+            
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
                 raise ValueError("** class doesn't exist **")
 
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
+            
             if obj:
                 del obj_dict[key]
                 storage.save()
@@ -96,12 +98,14 @@ class HBNBCommand(cmd.Cmd):
 
             args = arg.split()
             class_name, obj_id = args[0], args[1]
+            
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
                 raise ValueError("** class doesn't exist **")
 
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
+            
             if not obj:
                 print("** no instance found **")
                 return
