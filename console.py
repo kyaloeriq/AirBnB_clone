@@ -24,7 +24,6 @@ class HBNBCommand(cmd.Cmd):
             class_name = arg
             if class_name not in ["BaseModel"]:
                 raise ValueError("** class doesn't exist **")
-            
             new_instance = BaseModel()
             new_instance.save()
             print(new_instance.id)
@@ -75,7 +74,6 @@ class HBNBCommand(cmd.Cmd):
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
-            
             if obj:
                 del obj_dict[key]
                 storage.save()
@@ -103,7 +101,6 @@ class HBNBCommand(cmd.Cmd):
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
-            
             if not obj:
                 print("** no instance found **")
                 return
@@ -128,12 +125,13 @@ class HBNBCommand(cmd.Cmd):
             args = shlex.split(arg)
             if args and args[0] not in ["BaseModel"]:
                 raise ValueError("** class doesn't exist **")
-                
             obj_list = storage.all()
             if args:
-                filtered_objs = [str(obj)
+                filtered_objs = [
+                        str(obj)
                         for obj in obj_list.values()
-                        if obj.__class__.__name__ == args[0]]
+                        if obj.__class__.__name__ == args[0]
+                        ]
                 print(filtered_objs)
             else:
                 print([str(obj) for obj in obj_list.values()])
