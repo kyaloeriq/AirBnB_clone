@@ -14,11 +14,14 @@ from models.review import Review
 storage = FileStorage()
 storage.reload()
 
+
 class HBNBCommand(cmd.Cmd):
     """Class that inherits methods and attributes of the parent class cmd"""
     prompt = "(hbnb) "  # Setting custom prompt
-
-    valid_classes = ["BaseModel", "Place", "State", "City", "Amenity", "Review"]
+    valid_classes = [
+            "BaseModel", "Place", "State",
+            "City", "Amenity", "Review"
+            ]
 
     def do_create(self, arg):
         """Creates a new instance of a specified class"""
@@ -32,7 +35,6 @@ class HBNBCommand(cmd.Cmd):
 
             if not params:
                 raise ValueError("** instance attributes missing **")
-
             kwargs = {}
             for param in params:
                 key, value = param.split("=")
@@ -64,7 +66,6 @@ class HBNBCommand(cmd.Cmd):
 
         except Exception as e:
             print(e)
-
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id"""
@@ -98,7 +99,7 @@ class HBNBCommand(cmd.Cmd):
 
             args = arg.split()
             class_name, obj_id = args[0], args[1]
-            
+
             if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
                 raise ValueError("** class doesn't exist **")
 
@@ -131,7 +132,9 @@ class HBNBCommand(cmd.Cmd):
                     raise ValueError("** class doesn't exist **")
                 
                 obj_list = storage.all()
-                filtered_objs = [str(obj) for obj in obj_list.values() if obj.__class__.__name__ == arg]
+                filtered_objs = [str(obj)
+                        for obj in obj_list.values()
+                        if obj.__class__.__name__ == arg]
                 print(filtered_objs)
             else:
                 obj_list = storage.all()
