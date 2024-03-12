@@ -5,7 +5,7 @@ Module that contains the entry point of the command interpreter
 import cmd
 import shlex  # For parsing quoted strings
 from models.base_model import BaseModel
-from models import storage
+from models.engine.file_storage import FileStorage
 
 storage = FileStorage()
 storage.reload()
