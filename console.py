@@ -15,6 +15,7 @@ storage = FileStorage()
 storage.reload()
 
 class HBNBCommand(cmd.Cmd):
+    """inherits all the methods and attributes of the parent class cmd"""
     prompt = "(hbnb) "  # Setting custom prompt
 
     valid_classes = ["BaseModel", "Place", "State", "City", "Amenity", "Review"]
