@@ -4,8 +4,8 @@ Module that contains the entry point of the command interpreter
 """
 import cmd
 import shlex  # For parsing quoted strings
-from models.engine import FileStorage
 from models.base_model import BaseModel
+from models import storage
 
 storage = FileStorage()
 storage.reload()
