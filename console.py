@@ -3,6 +3,7 @@
 Module that contains the entry point of the command interpreter
 """
 import cmd
+import shlex  # For parsing quoted strings
 from models.engine import FileStorage
 from models.base_model import BaseModel
 from models.place import Place
@@ -16,12 +17,8 @@ storage.reload()
 
 
 class HBNBCommand(cmd.Cmd):
-    """Class that inherits methods and attributes of the parent class cmd"""
+    """Class that contains the command interpreter"""
     prompt = "(hbnb) "  # Setting custom prompt
-    valid_classes = [
-            "BaseModel", "Place", "State",
-            "City", "Amenity", "Review"
-            ]
 
     def do_create(self, arg):
         """Creates a new instance of a specified class"""
@@ -29,18 +26,11 @@ class HBNBCommand(cmd.Cmd):
             if not arg:
                 raise ValueError("** class name missing **")
 
-            class_name, *params = arg.split()
-            if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
+            class_name = arg
+            if class_name not in ["BaseModel"]:
                 raise ValueError("** class doesn't exist **")
-
-            if not params:
-                raise ValueError("** instance attributes missing **")
-            kwargs = {}
-            for param in params:
-                key, value = param.split("=")
-                kwargs[key] = value.strip('"')
             
-            new_instance = eval(class_name)(**kwargs)
+            new_instance = BaseModel()
             new_instance.save()
             print(new_instance.id)
 
@@ -50,13 +40,18 @@ class HBNBCommand(cmd.Cmd):
     def do_show(self, arg):
         """Prints the string representation of an instance"""
         try:
+            args = shlex.split(arg)
             if not arg:
                 raise ValueError("** class name missing **")
 
-            class_name, obj_id = arg.split()
-            if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
+            class_name = args[0]
+            if class_name not in ["BaseModel"]:
                 raise ValueError("** class doesn't exist **")
 
+            if len(args) < 2:
+                raise ValueError("** instance id missing **")
+
+            obj_id = args[1]
             key = "{}.{}".format(class_name, obj_id)
             obj = storage.all().get(key)
             if obj:
@@ -70,14 +65,18 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id"""
         try:
-            if not arg:
+            args = shlex.split(arg)
+            if not args:
                 raise ValueError("** class name missing **")
 
-            class_name, obj_id = arg.split()
-            
-            if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
+            class_name = args[0]
+            if class_name not in ["BaseModel"]:
                 raise ValueError("** class doesn't exist **")
 
+            if len(args) < 2:
+                raise ValueError("** instance id missing **")
+
+            obj_id = args[1]
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
@@ -94,15 +93,18 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, arg):
         """Updates an instance based on the class name and id"""
         try:
+            args = shlex.split(arg)
             if not arg:
                 raise ValueError("** class name missing **")
 
-            args = arg.split()
-            class_name, obj_id = args[0], args[1]
-
-            if class_name not in ["Place", "State", "City", "Amenity", "Review"]:
+            class_name = args[0]
+            if class_name not in ["BaseModel"]:
                 raise ValueError("** class doesn't exist **")
 
+            if len(args) < 2:
+                raise ValueError("** instance id missing **")
+
+            obj_id = args[1]
             key = "{}.{}".format(class_name, obj_id)
             obj_dict = storage.all()
             obj = obj_dict.get(key)
@@ -117,7 +119,8 @@ class HBNBCommand(cmd.Cmd):
             if len(args) < 4:
                 raise ValueError("** value missing **")
 
-            attr_name, attr_value = args[2], args[3].strip('"')
+            attr_name = args[2]
+            attr_value = args[3]
             setattr(obj, attr_name, attr_value)
             storage.save()
 
@@ -127,17 +130,17 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, arg):
         """Prints all string representations of all instances"""
         try:
-            if arg:
-                if arg not in self.valid_classes:
-                    raise ValueError("** class doesn't exist **")
+            args = shlex.split(arg)
+            if args and args[0] not in ["BaseModel"]:
+                raise ValueError("** class doesn't exist **")
                 
-                obj_list = storage.all()
+            obj_list = storage.all()
+            if args:
                 filtered_objs = [str(obj)
                         for obj in obj_list.values()
-                        if obj.__class__.__name__ == arg]
+                        if obj.__class__.__name__ == args[0]]
                 print(filtered_objs)
             else:
-                obj_list = storage.all()
                 print([str(obj) for obj in obj_list.values()])
 
         except Exception as e:
@@ -161,7 +164,7 @@ class HBNBCommand(cmd.Cmd):
         print("Quit command to exit the program")
 
     def help_EOF(self):
-        """Help documentation for handling EOF"""
+        """Documentation for handling EOF"""
         print("Handles EOF signal to exit the program")
 
 
